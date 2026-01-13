@@ -1,0 +1,37 @@
+<template>
+  <div class="public-view-wrapper">
+    
+    <main class="main-content-public">
+      <LoadingSpinner v-if="store.isLoading" />
+      <TicketDisplay v-else-if="store.hasActiveTicket" />
+      <FormClosedMessage 
+        v-else-if="!store.formStatus.isOpen" 
+        :message="store.formStatus.message" 
+      />
+      <QueueForm v-else />
+    </main>
+
+    <footer class="public-footer">
+      <p class="copyright">
+        &copy; {{ new Date().getFullYear() }} BPJS Kesehatan Cabang Makassar
+      </p>
+    </footer>
+    
+  </div>
+</template>
+
+<script setup>
+import { onMounted } from 'vue'
+import { useQueueStore } from '@/stores/queueStore'
+import QueueForm from '@/components/QueueForm.vue'
+import TicketDisplay from '@/components/TicketDisplay.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import FormClosedMessage from '@/components/FormClosedMessage.vue' 
+import { useSettingsStore } from '@/stores/settingsStore'
+const store = useQueueStore()
+const settingsStore = useSettingsStore()
+onMounted(() => {
+  settingsStore.initListener()
+  store.checkLocalStorage()
+})
+</script>
